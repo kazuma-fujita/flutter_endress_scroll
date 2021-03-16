@@ -20,60 +20,34 @@ class ScrollListView extends StatelessWidget {
 }
 
 class _ScrollListView extends HookWidget {
-  // late final ScrollController _scrollController;
-  final _scrollController = ScrollController();
-  static const _threshold = 0.8;
+  static const _threshold = 0.7;
 
   @override
   Widget build(BuildContext context) {
     final state = useProvider(scrollListViewModelProvider.state);
-    useEffect(() {
-      // _scrollController = ScrollController();
-      _addScrollListener(context, state);
-      return null;
-      // return _scrollController.dispose;
-    });
 
-    final data = useProvider(scrollListViewModelProvider.state).data;
-    // final items = useProvider(scrollListViewModelProvider.state).data?.value;
-    final items = data != null ? data.value.items : const <Item>[];
+    if (state.error != null) {
+      _showErrorSnackBar(state.error!);
+    }
 
-    // return useProvider(scrollListViewModelProvider.state).when(
-    //     data: (data) => ListView.builder(
-    //           itemCount: data.items.length,
-    //           controller: _scrollController,
-    //           itemBuilder: (BuildContext _context, int index) {
-    //             print('index: $index');
-    //             return _buildRow(data.items[index]);
-    //           },
-    //         ),
-    //     loading: () => const Center(child: CircularProgressIndicator()),
-    //     error: (error, _) => Center(
-    //           child: Text(error.toString()),
-    //         ));
-
-    return ListView.builder(
-      itemCount: items.length,
-      controller: _scrollController,
-      itemBuilder: (BuildContext _context, int index) {
-        print('index: $index');
-        return _buildRow(items[index]);
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        final scrollProportion =
+            scrollInfo.metrics.pixels / scrollInfo.metrics.maxScrollExtent;
+        if (!state.isLoading && scrollProportion > _threshold) {
+          context.read(scrollListViewModelProvider).fetchList();
+        }
+        return false;
       },
+      child: state.items.isNotEmpty
+          ? ListView.builder(
+              itemCount: state.items.length,
+              itemBuilder: (BuildContext _context, int index) {
+                return _buildRow(state.items[index]);
+              },
+            )
+          : _emptyListView(),
     );
-  }
-
-  void _addScrollListener(BuildContext context, AsyncValue<Items> state) {
-    _scrollController.addListener(() {
-      final scrollValue =
-          _scrollController.offset / _scrollController.position.maxScrollExtent;
-      print(scrollValue);
-      if (state is AsyncData &&
-          scrollValue != double.infinity &&
-          scrollValue > _threshold) {
-        print('loadNext');
-        context.read(scrollListViewModelProvider).fetchList();
-      }
-    });
   }
 
   Widget _buildRow(Item item) {
@@ -92,5 +66,38 @@ class _ScrollListView extends HookWidget {
         ),
       ),
     );
+  }
+
+  Widget _emptyListView() {
+    return const Center(
+      child: Text(
+        'Item not found.',
+        style: TextStyle(
+          color: Colors.black54,
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
+
+  void _showErrorSnackBar(String errorMessage) {
+    final context = useContext();
+    final snackBar = SnackBar(
+      content: Text(errorMessage),
+      duration: const Duration(days: 365),
+      action: SnackBarAction(
+        label: '再試行',
+        onPressed: () {
+          // 一覧取得
+          context.read(scrollListViewModelProvider).fetchList();
+          // snackBar非表示
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        },
+      ),
+    );
+    // 全Widgetのbuild後にsnackBarを表示させる
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
   }
 }

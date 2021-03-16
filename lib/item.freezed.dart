@@ -165,9 +165,12 @@ abstract class _Item implements Item {
 class _$ItemsTearOff {
   const _$ItemsTearOff();
 
-  _Items call({required List<Item> items}) {
+  _Items call(
+      {required List<Item> items, bool isLoading = false, String? error}) {
     return _Items(
       items: items,
+      isLoading: isLoading,
+      error: error,
     );
   }
 }
@@ -178,6 +181,8 @@ const $Items = _$ItemsTearOff();
 /// @nodoc
 mixin _$Items {
   List<Item> get items => throw _privateConstructorUsedError;
+  bool get isLoading => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ItemsCopyWith<Items> get copyWith => throw _privateConstructorUsedError;
@@ -187,7 +192,7 @@ mixin _$Items {
 abstract class $ItemsCopyWith<$Res> {
   factory $ItemsCopyWith(Items value, $Res Function(Items) then) =
       _$ItemsCopyWithImpl<$Res>;
-  $Res call({List<Item> items});
+  $Res call({List<Item> items, bool isLoading, String? error});
 }
 
 /// @nodoc
@@ -201,12 +206,22 @@ class _$ItemsCopyWithImpl<$Res> implements $ItemsCopyWith<$Res> {
   @override
   $Res call({
     Object? items = freezed,
+    Object? isLoading = freezed,
+    Object? error = freezed,
   }) {
     return _then(_value.copyWith(
       items: items == freezed
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<Item>,
+      isLoading: isLoading == freezed
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      error: error == freezed
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -216,7 +231,7 @@ abstract class _$ItemsCopyWith<$Res> implements $ItemsCopyWith<$Res> {
   factory _$ItemsCopyWith(_Items value, $Res Function(_Items) then) =
       __$ItemsCopyWithImpl<$Res>;
   @override
-  $Res call({List<Item> items});
+  $Res call({List<Item> items, bool isLoading, String? error});
 }
 
 /// @nodoc
@@ -231,26 +246,41 @@ class __$ItemsCopyWithImpl<$Res> extends _$ItemsCopyWithImpl<$Res>
   @override
   $Res call({
     Object? items = freezed,
+    Object? isLoading = freezed,
+    Object? error = freezed,
   }) {
     return _then(_Items(
       items: items == freezed
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<Item>,
+      isLoading: isLoading == freezed
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      error: error == freezed
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 class _$_Items with DiagnosticableTreeMixin implements _Items {
-  const _$_Items({required this.items});
+  const _$_Items({required this.items, this.isLoading = false, this.error});
 
   @override
   final List<Item> items;
+  @JsonKey(defaultValue: false)
+  @override
+  final bool isLoading;
+  @override
+  final String? error;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Items(items: $items)';
+    return 'Items(items: $items, isLoading: $isLoading, error: $error)';
   }
 
   @override
@@ -258,7 +288,9 @@ class _$_Items with DiagnosticableTreeMixin implements _Items {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'Items'))
-      ..add(DiagnosticsProperty('items', items));
+      ..add(DiagnosticsProperty('items', items))
+      ..add(DiagnosticsProperty('isLoading', isLoading))
+      ..add(DiagnosticsProperty('error', error));
   }
 
   @override
@@ -266,12 +298,20 @@ class _$_Items with DiagnosticableTreeMixin implements _Items {
     return identical(this, other) ||
         (other is _Items &&
             (identical(other.items, items) ||
-                const DeepCollectionEquality().equals(other.items, items)));
+                const DeepCollectionEquality().equals(other.items, items)) &&
+            (identical(other.isLoading, isLoading) ||
+                const DeepCollectionEquality()
+                    .equals(other.isLoading, isLoading)) &&
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(items);
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(items) ^
+      const DeepCollectionEquality().hash(isLoading) ^
+      const DeepCollectionEquality().hash(error);
 
   @JsonKey(ignore: true)
   @override
@@ -280,10 +320,15 @@ class _$_Items with DiagnosticableTreeMixin implements _Items {
 }
 
 abstract class _Items implements Items {
-  const factory _Items({required List<Item> items}) = _$_Items;
+  const factory _Items(
+      {required List<Item> items, bool isLoading, String? error}) = _$_Items;
 
   @override
   List<Item> get items => throw _privateConstructorUsedError;
+  @override
+  bool get isLoading => throw _privateConstructorUsedError;
+  @override
+  String? get error => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
   _$ItemsCopyWith<_Items> get copyWith => throw _privateConstructorUsedError;

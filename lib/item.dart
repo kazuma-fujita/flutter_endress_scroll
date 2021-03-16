@@ -15,5 +15,7 @@ abstract class Item with _$Item {
 abstract class Items with _$Items {
   const factory Items({
     required final List<Item> items,
+    @Default(false) bool isLoading,
+    final String? error,
   }) = _Items;
 }

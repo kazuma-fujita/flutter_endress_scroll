@@ -24,11 +24,7 @@ class _ScrollDetectorState extends State<ScrollDetector> {
     widget.scrollController.addListener(() {
       final scrollValue = widget.scrollController.offset /
           widget.scrollController.position.maxScrollExtent;
-      print(widget.scrollController.position.maxScrollExtent);
-      print(widget.scrollController.offset);
-      print(scrollValue);
       if (scrollValue > widget.threshold) {
-        print('loadNext');
         widget.loadNext();
       }
     });
